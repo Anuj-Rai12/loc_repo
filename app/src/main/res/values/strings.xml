@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Android Testing</string>
+
+    <!-- Activity Main By-->
+    <string name="fir_acct">Main Screen</string>
     <string name="first_btn">Next Button</string>
+    <string name="sec_act">Second Screen</string>
     <string name="Back_btn">Previous Button</string>
 
 </resources>
