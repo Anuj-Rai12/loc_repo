@@ -2,9 +2,9 @@
     <string name="app_name">Android Testing</string>
 
     <!-- Activity Main By-->
-    <string name="fir_acct">Main Screen</string>
-    <string name="first_btn">Next Button</string>
-    <string name="sec_act">Second Screen</string>
+    <string name="cal_btn">Calculate</string>
+    <string name="area_txt">Area :</string>
+    <string name="cir_txt">Circumference :</string>
     <string name="Back_btn">Previous Button</string>
 
 </resources>

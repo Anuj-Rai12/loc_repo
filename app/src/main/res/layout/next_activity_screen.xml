@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
-        android:text="@string/sec_act"
+        android:text="@string/cal_btn"
         android:textColor="@color/black"
         android:textSize="26sp"
         android:textStyle="bold"
