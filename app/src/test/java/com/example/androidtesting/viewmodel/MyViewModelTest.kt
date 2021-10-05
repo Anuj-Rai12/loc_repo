@@ -1,7 +1,9 @@
 package com.example.androidtesting.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.androidtesting.liveDataTestCase.getOrAwaitValue
 import com.example.androidtesting.model.MyInterFace
+import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -26,5 +28,13 @@ class MyViewModelTest {
         myViewModel.getCalculate(2.toDouble())
         val read = myViewModel.area.value
         assertThat(read).isEqualTo(23.toDouble().toString())
+    }
+
+
+    @Test
+    fun testing_some_data() {
+        myViewModel.getCalculate(2.toDouble())
+        val data=myViewModel.area.getOrAwaitValue()
+        assertThat(data).isEqualTo(23.toDouble().toString())
     }
 }
