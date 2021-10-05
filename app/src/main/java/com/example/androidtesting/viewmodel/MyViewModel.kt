@@ -3,11 +3,9 @@ package com.example.androidtesting.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.androidtesting.model.MyCal
+import com.example.androidtesting.model.MyInterFace
 
-class MyViewModel : ViewModel() {
-
-    private val myCal:MyCal = MyCal()
+class MyViewModel(private val myInterFace: MyInterFace) : ViewModel() {
 
     private val privateArea = MutableLiveData<String>()
     val area: LiveData<String>
@@ -19,9 +17,9 @@ class MyViewModel : ViewModel() {
         get() = privateCir
 
 
-    fun getCalculate(radius:Double){
-        privateArea.value=myCal.getAreaDoubleValue(radius).toString()
-        privateCir.value=myCal.getCircleDoubleValue(radius).toString()
+    fun getCalculate(radius: Double) {
+        privateArea.value = myInterFace.getAreaDoubleValue(radius).toString()
+        privateCir.value = myInterFace.getCircleDoubleValue(radius).toString()
     }
 
 }
