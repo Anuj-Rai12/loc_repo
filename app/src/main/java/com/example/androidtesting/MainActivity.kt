@@ -11,6 +11,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.example.androidtesting.database.Locations
+import com.example.androidtesting.database.ViewModel
+import com.example.androidtesting.database.ViewModelProvider
 import com.example.androidtesting.databinding.ActivityMainBinding
 import com.example.androidtesting.utils.*
 import com.google.android.gms.location.LocationCallback
@@ -25,6 +28,7 @@ const val TAG = "ANUJ"
 
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: ViewModel
     private var dialog: Dialog? = null
     private var data: UserLocation? = null
     private val mFusedLocation by lazy {
@@ -36,7 +40,16 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setUpViewModel()
         getLocationData()
+
+        viewModel.read.observe(this) {
+            it?.let { userLocation ->
+                if (userLocation.latitude.isNotEmpty() && userLocation.latitude.isNotBlank())
+                    this.data = userLocation
+            }
+        }
+
         binding.locationClick.setOnClickListener {
             if (getLocationData()) {
                 if (isLocationEnabled()) {
@@ -48,15 +61,24 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 getLocationData()
             }
         }
+
         binding.shareClick.setOnClickListener {
             if (data != null) {
                 val url = "$URL${data?.latitude},${data?.longitude}"
-                val message="Hi check my location on ${data?.timestamp} \n\n $url"
+                val message = "Hi check my location on ${data?.timestamp} \n\n $url"
                 this.shareText(title = "Share Location", message = message)
             } else {
                 this.msg("Firstly Get your location")
             }
         }
+
+    }
+
+    private fun setUpViewModel() {
+        val location = Locations(applicationContext)
+        val viewModelFactory = ViewModelProvider(location)
+        viewModel =
+            androidx.lifecycle.ViewModelProvider(this, viewModelFactory)[ViewModel::class.java]
     }
 
     @SuppressLint("MissingPermission")
@@ -106,6 +128,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 msg = "The Longitude is ${it.longitude} \n And Latitude is ${it.latitude}\nAt ${it.timestamp}"
             )
             dialog?.show(supportFragmentManager, TAG)
+            viewModel.setLocation(it)
         }
     }
 
