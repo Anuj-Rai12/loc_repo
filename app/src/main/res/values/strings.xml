@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Android Testing</string>
+    <string name="app_name">My Location</string>
+    <string name="location_type">Location File</string>
 </resources>
