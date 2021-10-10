@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.example.androidtesting.R
 import com.vmadalin.easypermissions.EasyPermissions
 import java.text.DateFormat
@@ -45,8 +47,9 @@ class Dialog(private val title: String, private val msg: String) : DialogFragmen
         return alterDialog.create()
     }
 }
-
+@Entity(tableName = "User_Entity_table")
 data class UserLocation(
+    @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val longitude: String,
     val latitude: String,

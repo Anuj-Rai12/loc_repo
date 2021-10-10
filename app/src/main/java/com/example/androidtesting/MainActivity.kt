@@ -11,10 +11,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.example.androidtesting.database.Locations
-import com.example.androidtesting.database.ViewModel
-import com.example.androidtesting.database.ViewModelProvider
+import com.example.androidtesting.model.ViewModel
+import com.example.androidtesting.model.ViewModelProvider
 import com.example.androidtesting.databinding.ActivityMainBinding
+import com.example.androidtesting.db.LocDbInstance
 import com.example.androidtesting.utils.*
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -43,10 +43,17 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setUpViewModel()
         getLocationData()
 
-        viewModel.read.observe(this) {
+        viewModel.dbData.observe(this) {
             it?.let { userLocation ->
-                if (userLocation.latitude.isNotEmpty() && userLocation.latitude.isNotBlank())
-                    this.data = userLocation
+                if (userLocation.isNotEmpty()) {
+                    this.data = userLocation.last()
+                    //And Last Value is
+                    Log.i(
+                        TAG,
+                        "onCreate: Last Value is is ${userLocation.last()} \n At ${userLocation.last().timestamp}"
+                    )
+
+                }
             }
         }
 
@@ -75,8 +82,8 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     private fun setUpViewModel() {
-        val location = Locations(applicationContext)
-        val viewModelFactory = ViewModelProvider(location)
+        val dbDao = LocDbInstance.getInstance(applicationContext).locDao
+        val viewModelFactory = ViewModelProvider(dbDao)
         viewModel =
             androidx.lifecycle.ViewModelProvider(this, viewModelFactory)[ViewModel::class.java]
     }
@@ -128,7 +135,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 msg = "The Longitude is ${it.longitude} \n And Latitude is ${it.latitude}\nAt ${it.timestamp}"
             )
             dialog?.show(supportFragmentManager, TAG)
-            viewModel.setLocation(it)
+            viewModel.setLocationData(it)
         }
     }
 
