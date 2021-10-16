@@ -197,6 +197,12 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
+override fun onPause() {
+        super.onPause()
+        hideLoading()
+        alertDialog?.dismiss()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         alertDialog?.dismiss()
