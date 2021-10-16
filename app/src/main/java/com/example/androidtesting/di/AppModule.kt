@@ -28,6 +28,7 @@ object AppModule {
     fun getRetrofit(): MyPostApi =
         Retrofit.Builder()
             .baseUrl(FilesUtils.BASEUrl)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(MyPostApi::class.java)

@@ -18,11 +18,9 @@ import javax.inject.Inject
 import android.os.BatteryManager
 
 import android.content.Intent
-
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
-import android.widget.Toast
 import com.example.androidtesting.model.ApiResponseCls
 import com.example.androidtesting.model.LocalData
 
@@ -67,20 +65,22 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setUpData() {
+        if (imeiData==null)
+            getIMEI()
+
         if (networkSetting.isConnected()) {
             if (charringFlag == null || chargeLevel == null || imeiData == null) {
-                this.msg("UnExpected Error So, PLease Try Again")
+                this.msg("ERROR PLease Try Again")
             } else {
                 uploadData()
             }
         } else {
             this.retryMsg(response = {
-                this.msg("Working ...", Toast.LENGTH_LONG)
                 if (networkSetting.isConnected()) {
                     if (charringFlag == null || chargeLevel == null || imeiData == null) {
-                        this.msg("UnExpected Error")
+                        this.msg("ERROR PLease Try Again")
                     } else {
                         uploadData()
                     }
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun uploadData() {
         val local = LocalData(
             battery = chargeLevel!!,
@@ -178,7 +178,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             manifest,
         )
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun dialog(title: String, message: String, btnName: String = "ok") {
         alertDialog =
             MessageDialog(title = title, message = message, btnName = btnName) { setUpData() }

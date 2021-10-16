@@ -3,7 +3,6 @@ package com.example.androidtesting.api
 import com.example.androidtesting.model.ApiResponseCls
 import com.example.androidtesting.model.ApiUploadData
 import com.example.androidtesting.unit.FilesUtils
-import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Headers
