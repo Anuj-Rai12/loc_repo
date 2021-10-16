@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setUpData() {
-        if (imeiData==null)
+        if (imeiData == null)
             getIMEI()
 
         if (networkSetting.isConnected()) {
@@ -195,6 +195,12 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             } else
                 grantPermission()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        hideLoading()
+        alertDialog?.dismiss()
     }
 
     override fun onDestroy() {
