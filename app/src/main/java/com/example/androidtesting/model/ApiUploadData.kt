@@ -1,15 +1,26 @@
 package com.example.androidtesting.model
 
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.text.DateFormat
 
 data class ApiUploadData(
-    @SerializedName("battery") val battery: String,
-    @SerializedName("charging") val charging: String,
-    @SerializedName("device") val device: String,
-    @SerializedName("internet-connected") val internetConnected: String,
-    @SerializedName(" time-stamp") val timeStamp: String
+    @SerializedName("device")
+    val device: String,
+
+    @SerializedName("internet-connected")
+    val internetConnected: String,
+
+    @SerializedName("charging")
+    val charging: String,
+
+    @SerializedName("battery")
+    val battery: String,
+
+    @SerializedName("time-stamp")
+    val timeStamp: String
+
 )
 
 

@@ -22,6 +22,8 @@ import android.content.Intent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
+import android.widget.Toast
+import com.example.androidtesting.model.ApiResponseCls
 import com.example.androidtesting.model.LocalData
 
 
@@ -59,38 +61,73 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 }
             }
         }
-
+        getBattery()
         binding.getInfoBtn.setOnClickListener {
-            getBattery()
-            if (networkSetting.isConnected()) {
-                if (charringFlag == null || chargeLevel == null || imeiData == null) {
-                    this.msg("UnExpected Error")
-                    return@setOnClickListener
-                } else {
-                    uploadData()
-                }
-            } else {
-                this.retryMsg(response = {
-                    if (networkSetting.isConnected()) {
-                        if (charringFlag == null || chargeLevel == null || imeiData == null) {
-                            this.msg("UnExpected Error")
-                        } else {
-                            uploadData()
-                        }
-                    }
-                })
-            }
+            setUpData()
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun setUpData() {
+        if (networkSetting.isConnected()) {
+            if (charringFlag == null || chargeLevel == null || imeiData == null) {
+                this.msg("UnExpected Error So, PLease Try Again")
+            } else {
+                uploadData()
+            }
+        } else {
+            this.retryMsg(response = {
+                this.msg("Working ...", Toast.LENGTH_LONG)
+                if (networkSetting.isConnected()) {
+                    if (charringFlag == null || chargeLevel == null || imeiData == null) {
+                        this.msg("UnExpected Error")
+                    } else {
+                        uploadData()
+                    }
+                }
+            })
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun uploadData() {
         val local = LocalData(
-            battery = chargeLevel.toString(),
-            charging = charringFlag.toString(),
-            device = imeiData.toString(),
+            battery = chargeLevel!!,
+            charging = charringFlag!!.toString(),
+            device = imeiData!!,
             internetConnected = networkSetting.isConnected().toString()
         )
-        Log.i(TAG, "uploadData: The Answers is -> $local ")
+        viewModel.uploadData(local).observe(this) {
+            when (it) {
+                is MySealedFile.Error -> {
+                    hideLoading()
+                    Log.i(TAG, "uploadData: ${it.exception}")
+                    dialog(
+                        title = "Error",
+                        message = "${it.exception?.localizedMessage}",
+                        btnName = FilesUtils.retryBtn
+                    )
+                }
+                is MySealedFile.Loading -> {
+                    showLoading("${it.data}")
+                }
+                is MySealedFile.Success -> {
+                    hideLoading()
+                    val response = it.data as ApiResponseCls?
+                    if (response != null) {
+                        val message =
+                            "Battery Charge About -> ${response.battery}%\nBattery is Changing : ${response.charging}\n\n" +
+                                    "Internet Connection Status -> ${response.internetConnected}\n\n" +
+                                    "Device -> ${response.device}\n\n" +
+                                    "All Information has Recorded on -> ${response.timeStamp}\n"
+                        dialog(title = "Success", message = message)
+
+                    } else {
+                        dialog("Error", "Un-Known Error is Found", btnName = FilesUtils.retryBtn)
+                    }
+                }
+            }
+        }
     }
 
     private fun getBattery() {
@@ -140,6 +177,13 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             code,
             manifest,
         )
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun dialog(title: String, message: String, btnName: String = "ok") {
+        alertDialog =
+            MessageDialog(title = title, message = message, btnName = btnName) { setUpData() }
+        alertDialog?.show(supportFragmentManager, "Dialog")
+    }
 
     private fun showLoading(string: String) = customProgress.showLoading(this, string)
     private fun hideLoading() = customProgress.hideLoading()

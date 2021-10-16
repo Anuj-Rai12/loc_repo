@@ -45,13 +45,28 @@ fun Context.msg(msg: String, time: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, msg, time).show()
 }
 
-class MessageDialog constructor(private val title: String, private val message: String) :
+class MessageDialog constructor(
+    private val title: String,
+    private val message: String,
+    private val btnName: String,
+    private val itemClicked: (() -> Unit?)? = null
+) :
     androidx.fragment.app.DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val alterDialog = AlertDialog.Builder(requireActivity()).setTitle(title)
         alterDialog.setMessage(message).setIcon(android.R.drawable.ic_dialog_info)
-        alterDialog.setPositiveButton("ok") { dialogInterface, _ ->
-            dialogInterface.dismiss()
+        if (btnName == "ok") {
+            alterDialog.setPositiveButton(btnName) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+            }
+        } else {
+            alterDialog.setPositiveButton(btnName) { dialogInterface, _ ->
+                itemClicked?.invoke()
+                dialogInterface.dismiss()
+            }
+            alterDialog.setNeutralButton(FilesUtils.cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
         }
         return alterDialog.create()
     }
@@ -85,13 +100,13 @@ fun Context.getDeviceId(): String {
 fun Activity.retryMsg(
     title: String = "No InterNet Connection Found Try Again",
     setAction: String = "RETRY",
-    response: (() -> Unit)? = null,
+    response: () -> Unit,
     length: Int = Snackbar.LENGTH_LONG
 ) {
     val snackBar = Snackbar.make(findViewById(android.R.id.content), title, length)
     setAction.let {
         snackBar.setAction(it) {
-            response?.invoke()
+            response()
         }.setActionTextColor(resources.getColor(R.color.red, null))
     }
     snackBar.show()
@@ -99,11 +114,13 @@ fun Activity.retryMsg(
 
 
 object FilesUtils {
-    const val BASEUrl = "http://143.244.138.96:2110/"
-    const val POST_REQ = "api/status"
+    const val BASEUrl = "http://143.244.138.96:2110/api/"
+    const val POST_REQ = "status"
     const val contextType = "Content-Type: application/json"
     const val ACTION_SET_REPETITIVE_EXACT = "ACTION_SET_REPETITIVE_EXACT"
     const val ACTION_SET_EXACT = "ACTION_SET_EXTRA"
     const val ExTRA_ALARM_DURATION = "ALARM_DURATION"
     const val repeatTime = 300000
+    const val cancel = "Cancel"
+    const val retryBtn = "Retry"
 }
