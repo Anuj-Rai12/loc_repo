@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Android Testing</string>
+    <string name="app_name">Android Intern</string>
+    <string name="infoBtn">Get Device Information</string>
 </resources>
