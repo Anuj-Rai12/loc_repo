@@ -10,10 +10,15 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.example.androidtesting.R
+import com.example.androidtesting.TAG
+import com.google.android.material.snackbar.Snackbar
 import com.vmadalin.easypermissions.EasyPermissions
+import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -65,6 +70,7 @@ fun Context.getDeviceId(): String {
         try {
             mTelephony.imei
         } catch (e: Exception) {
+            Log.i(TAG, "getDeviceId: Error Found -> ${e.localizedMessage}")
             Settings.Secure.getString(
                 contentResolver,
                 Settings.Secure.ANDROID_ID
@@ -73,6 +79,24 @@ fun Context.getDeviceId(): String {
     }
     return deviceId
 }
+
+
+@RequiresApi(Build.VERSION_CODES.M)
+fun Activity.retryMsg(
+    title: String = "No InterNet Connection Found Try Again",
+    setAction: String = "RETRY",
+    response: (() -> Unit)? = null,
+    length: Int = Snackbar.LENGTH_LONG
+) {
+    val snackBar = Snackbar.make(findViewById(android.R.id.content), title, length)
+    setAction.let {
+        snackBar.setAction(it) {
+            response?.invoke()
+        }.setActionTextColor(resources.getColor(R.color.red, null))
+    }
+    snackBar.show()
+}
+
 
 object FilesUtils {
     const val BASEUrl = "http://143.244.138.96:2110/"

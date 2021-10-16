@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyViewModel @Inject constructor(private val repository: ApiRepository) : ViewModel() {
-    val imeiId= MutableStateFlow<String?>(null)
+    val imeiId = MutableStateFlow("")
 
     fun uploadData(localData: LocalData) = repository.uploadDeviceData(localData).asLiveData()
 
